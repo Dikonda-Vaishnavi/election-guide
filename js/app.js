@@ -60,21 +60,19 @@ async function sendMessage() {
   const loader = appendLoader();
 
   try {
-    const response = await fetch(CLAUDE_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'x-api-key': 'DEMO_KEY_HANDLED_BY_PROXY'
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: conversationHistory
-      })
-    });
+   const response = await fetch(
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyC7gJaEtKMJsaMissing_Get_Your_Key`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: text }] }],
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
+    })
+  }
+);
+const data = await response.json();
+const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.';
 
     if (!response.ok) {
       throw new Error('API Error');
