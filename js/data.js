@@ -1,41 +1,41 @@
 var ELECTION_PHASES = [
-  { phase: "Phase 1", title: "Voter Registration", date: "Jan - Oct", dot: "Registration", detail: "Ensure you are registered to vote before the deadline.", ask: "How do I register to vote?" },
-  { phase: "Phase 2", title: "Primaries & Caucuses", date: "Feb - Jun", dot: "Primaries", detail: "States hold primaries to select presidential nominees.", ask: "What is a primary election?" },
-  { phase: "Phase 3", title: "National Conventions", date: "Jul - Aug", dot: "Conventions", detail: "Parties officially nominate their candidates.", ask: "What happens at a national convention?" },
-  { phase: "Phase 4", title: "General Election Campaign", date: "Sep - Nov", dot: "Campaign", detail: "Candidates campaign across the country, participating in debates.", ask: "How do presidential campaigns work?" },
-  { phase: "Phase 5", title: "Election Day", date: "Early Nov", dot: "Election Day", detail: "Voters go to the polls to cast their ballots.", ask: "When is Election Day?" },
-  { phase: "Phase 6", title: "State Certification", date: "Nov - Dec", dot: "Certification", detail: "States count and certify the election results.", ask: "How are votes counted and certified?" },
-  { phase: "Phase 7", title: "Electoral College Vote", date: "Mid Dec", dot: "Electoral College", detail: "Electors cast their official votes for President.", ask: "How does the Electoral College work?" },
-  { phase: "Phase 8", title: "Inauguration Day", date: "Jan 20", dot: "Inauguration", detail: "The President-elect is officially sworn into office.", ask: "What is Inauguration Day?" }
+  {phase:'Phase 1',title:'Candidate Declaration',date:'12-18 months before election',dot:'done',detail:'Candidates formally announce their intention to run for office. They file paperwork with election authorities, declare their party affiliation, meet eligibility requirements, and begin building their campaign teams and fundraising operations.',ask:'How do candidates officially declare they are running for office?'},
+  {phase:'Phase 2',title:'Primaries and Caucuses',date:'6-12 months before election',dot:'done',detail:'Within each party, registered voters choose their preferred candidate through primary elections or caucuses. Winners earn delegate support. This narrows the field to one nominee per major party.',ask:'What is the difference between a primary election and a caucus?'},
+  {phase:'Phase 3',title:'Party Conventions',date:'3-6 months before election',dot:'done',detail:'Political parties hold national conventions where delegates officially nominate their candidates. The party platform is adopted. Candidates deliver acceptance speeches generating national media coverage.',ask:'What happens at a political party convention?'},
+  {phase:'Phase 4',title:'General Campaign',date:'2-4 months before election',dot:'active',detail:'Nominated candidates campaign nationwide holding rallies, running advertisements, participating in debates, and reaching voters through social media. Voter registration drives peak during this period.',ask:'How does campaign finance work in elections?'},
+  {phase:'Phase 5',title:'Voter Registration Deadline',date:'15-30 days before election',dot:'',detail:'Most jurisdictions require voters to register by a specific deadline. First-time voters must submit their information to be added to the official electoral roll. Some states allow same-day registration.',ask:'How does voter registration work and why is it required?'},
+  {phase:'Phase 6',title:'Early and Absentee Voting',date:'1-4 weeks before election',dot:'',detail:'Many jurisdictions offer early in-person voting or mail-in ballots for voters who cannot make it on election day. Absentee ballot requests must typically be submitted in advance.',ask:'How does absentee and mail-in voting work?'},
+  {phase:'Phase 7',title:'Election Day',date:'The official voting day',dot:'',detail:'Eligible registered voters cast their secret ballots at designated polling stations. Poll workers verify voter identity. Voters receive a ballot, mark their choices in private, and submit the completed ballot.',ask:'What happens at a polling station on election day?'},
+  {phase:'Phase 8',title:'Vote Counting and Certification',date:'Days to weeks after election',dot:'',detail:'After polls close, ballots are tallied by trained election officials. Results are audited and provisional ballots are reviewed. Final certified results are submitted to the appropriate authority and the winning candidate is declared.',ask:'How are election results counted, audited, and certified?'}
 ];
 
 var GLOSSARY_TERMS = [
-  { term: "Absentee Ballot", def: "A ballot completed and typically mailed in advance of an election by a voter who is unable to be present at the polls." },
-  { term: "Ballot", def: "A process of voting, in writing and typically in secret." },
-  { term: "Bipartisan", def: "Involving the agreement or cooperation of two political parties that usually oppose each other's policies." },
-  { term: "Caucus", def: "A meeting at which local members of a political party register their preference among candidates running for office or select delegates to attend a convention." },
-  { term: "Constituency", def: "A body of voters in a specified area who elect a representative to a legislative body." },
-  { term: "Delegate", def: "A person sent or authorized to represent others, in particular an elected representative sent to a conference." },
-  { term: "Electoral College", def: "A body of people representing the states of the US, who formally cast votes for the election of the president and vice president." },
-  { term: "Gerrymandering", def: "Manipulate the boundaries of an electoral constituency so as to favor one party or class." },
-  { term: "Incumbent", def: "The current holder of a political office." },
-  { term: "Lobbying", def: "Seek to influence a politician or public official on an issue." },
-  { term: "Midterm Election", def: "Elections held in the middle of a president's term, where members of Congress are elected." },
-  { term: "Partisan", def: "A strong supporter of a party, cause, or person." },
-  { term: "Platform", def: "The declared policy of a political party or group." },
-  { term: "Poll", def: "The process of voting in an election." },
-  { term: "Primary", def: "A preliminary election to appoint delegates to a party conference or to select the candidates for a principal, especially presidential, election." },
-  { term: "Referendum", def: "A general vote by the electorate on a single political question which has been referred to them for a direct decision." },
-  { term: "Swing State", def: "A US state where the two major political parties have similar levels of support among voters, viewed as important in determining the overall result of a presidential election." },
-  { term: "Ticket", def: "A single election choice which fills more than one political office or seat." },
-  { term: "Turnout", def: "The percentage of eligible voters who cast a ballot in an election." },
-  { term: "Voter Suppression", def: "A strategy to influence the outcome of an election by discouraging or preventing specific groups of people from voting." }
+  {term:'Absentee Ballot',def:'A ballot cast by a voter who cannot attend in person on election day, submitted by mail or in advance.'},
+  {term:'Ballot',def:'The official form or device used by a voter to record and cast their choices in an election.'},
+  {term:'Caucus',def:'A local meeting where party members gather to select candidates or delegates through open group discussion.'},
+  {term:'Constituency',def:'A defined geographic area whose residents are represented by a single elected official.'},
+  {term:'Delegate',def:'A representative chosen to vote on behalf of a group at a party convention or nominating event.'},
+  {term:'Electoral College',def:'In the US, a group of electors from each state who formally cast votes to elect the president and vice president.'},
+  {term:'Exit Poll',def:'A survey of voters conducted immediately after they cast their ballot, used to predict election outcomes.'},
+  {term:'Gerrymandering',def:'The manipulation of electoral district boundaries to favor one political party or group over another.'},
+  {term:'Incumbent',def:'The current holder of an elected office who is seeking re-election in an upcoming race.'},
+  {term:'Mandate',def:'The authority an elected official derives from voters to govern and implement specific policies.'},
+  {term:'Polling Station',def:'A designated location where eligible registered voters go to cast their ballots on election day.'},
+  {term:'Primary Election',def:'A preliminary election in which party members vote to select their party\'s official candidate for the general election.'},
+  {term:'Proportional Representation',def:'An electoral system where the share of legislative seats reflects the share of votes each party receives.'},
+  {term:'Recount',def:'A second official count of votes, typically requested when the margin of victory is very small.'},
+  {term:'Runoff Election',def:'A second election held between top candidates when no single candidate wins the required majority.'},
+  {term:'Suffrage',def:'The legal right to vote in public political elections. Universal suffrage means all adult citizens can vote.'},
+  {term:'Swing State',def:'A state where support is roughly equal between parties, making it highly competitive and influential.'},
+  {term:'Third Party',def:'Any political party other than the two dominant parties in a two-party political system.'},
+  {term:'Voter Registration',def:'The process of officially signing up with government authorities to be verified as an eligible voter.'},
+  {term:'Voter Suppression',def:'Efforts to discourage, prevent, or disenfranchise eligible voters from exercising their right to vote.'}
 ];
 
 var QUIZ_QUESTIONS = [
-  { q: "What is the Electoral College?", opts: ["A university for politicians", "The group that formally elects the President", "A system for campaign finance", "A type of primary election"], ans: 1, exp: "The Electoral College is the group of electors representing the states that formally casts votes for the election of the president." },
-  { q: "When is Election Day in the US?", opts: ["First Monday in November", "First Tuesday after the first Monday in November", "Last Tuesday in October", "November 1st always"], ans: 1, exp: "By law, Election Day is the first Tuesday following the first Monday in November." },
-  { q: "What is a Swing State?", opts: ["A state with playgrounds", "A state that always votes for one party", "A state where both major parties have a good chance of winning", "A state with the highest population"], ans: 2, exp: "A swing state is highly contested because both major parties have similar levels of support." },
-  { q: "What does an Incumbent mean?", opts: ["A new candidate", "The current office holder", "A campaign manager", "A voter"], ans: 1, exp: "An incumbent is the current holder of a political office." },
-  { q: "What is a primary election?", opts: ["The final election", "An election to choose party nominees", "A local mayoral election", "A vote on a new law"], ans: 1, exp: "Primaries are preliminary elections to select the candidates for the general election." }
+  {q:'What is the main purpose of a primary election?',opts:['To select a party\'s official candidate for the general election','To count and certify final election results','To draw new electoral district boundaries','To register new voters before election day'],ans:0,exp:'A primary election allows party members to vote and choose who will represent their party in the upcoming general election, narrowing down the field of candidates.'},
+  {q:'What does gerrymandering refer to?',opts:['A type of electronic voting machine','Manipulating district boundaries to favor one political party','A form of absentee or mail-in voting','The process of auditing and recounting ballots'],ans:1,exp:'Gerrymandering is the practice of drawing electoral district boundaries in a way that gives one political party an unfair advantage over others.'},
+  {q:'What is the Electoral College in the United States?',opts:['A university that trains election administrators','A committee that approves all election results','A body of electors who formally cast votes to elect the president','The national agency that oversees campaign finance'],ans:2,exp:'The Electoral College is a constitutional body of electors who formally cast the official votes to elect the president after the popular vote is held.'},
+  {q:'What makes a state a swing state or battleground state?',opts:['It has the highest number of electoral votes','It always votes for the same party every election','Support is roughly equal between parties making its outcome unpredictable','It holds its primary elections last'],ans:2,exp:'A swing state is one where no single party dominates. Both major parties have similar levels of support making the outcome uncertain and giving these states outsized importance.'},
+  {q:'What is the purpose of voter registration?',opts:['To allow candidates to officially run for office','To add a citizen\'s information to the official voter roll so they can cast a ballot','To determine which polling station gets the most resources','To assign party affiliation to all citizens'],ans:1,exp:'Voter registration is the process by which eligible citizens formally sign up with election authorities, verifying their identity and residence, so they can legally cast a ballot.'}
 ];

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ElectionGuide</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">🗳 ElectionGuide</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="chat">💬 Ask</button>
+      <button class="nav-btn" data-tab="timeline">📅 Timeline</button>
+      <button class="nav-btn" data-tab="glossary">📖 Glossary</button>
+      <button class="nav-btn" data-tab="quiz">✅ Quiz</button>
+      <button class="nav-btn" data-tab="translate">🌐 Translate</button>
+    </nav>
+    <span class="badge">Powered by AI</span>
+  </div>
+</header>
+
+<section class="hero" id="hero-section">
+  <div class="hero-inner">
+    <h1>Understand Elections,<br/>One Step at a Time</h1>
+    <p>Ask questions, explore timelines, test your knowledge — in plain language.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">8</span><span class="stat-label">Election Phases</span></div>
+      <div class="stat"><span class="stat-num">20</span><span class="stat-label">Key Terms</span></div>
+      <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Powered Guide</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="main-content">
+  <section class="tab-panel active" id="tab-chat">
+    <div class="panel-header"><h2>Ask the Election Guide</h2><p>Get clear, unbiased answers about how elections work.</p></div>
+    <div class="chat-wrapper">
+      <div class="chat-area" id="chat-area">
+        <div class="msg bot-msg">
+          <div class="avatar bot-av">🗳</div>
+          <div class="bubble">Hello! I am your Election Guide. I can explain voting steps, election timelines, candidate processes, key terms, and more. What would you like to know?</div>
+        </div>
+      </div>
+      <div class="quick-chips">
+        <button class="chip" onclick="quickAsk('How does voting work step by step?')">How does voting work?</button>
+        <button class="chip" onclick="quickAsk('What is the Electoral College?')">Electoral College</button>
+        <button class="chip" onclick="quickAsk('How do candidates register to run?')">Candidate registration</button>
+        <button class="chip" onclick="quickAsk('What is gerrymandering?')">Gerrymandering</button>
+        <button class="chip" onclick="quickAsk('How are votes counted?')">Vote counting</button>
+        <button class="chip" onclick="quickAsk('What is voter suppression?')">Voter suppression</button>
+      </div>
+      <div class="input-area">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Ask anything about elections..."/>
+        <button class="send-btn" id="send-btn">Send</button>
+      </div>
+    </div>
+    <div class="translate-bar">
+      <span>🌐 Translate this page:</span>
+      <div id="google_translate_element"></div>
+    </div>
+  </section>
+
+  <section class="tab-panel" id="tab-timeline" style="display:none">
+    <div class="panel-header"><h2>Election Timeline</h2><p>Click any phase to learn more.</p></div>
+    <div id="timeline-container"></div>
+  </section>
+
+  <section class="tab-panel" id="tab-glossary" style="display:none">
+    <div class="panel-header"><h2>Key Terms</h2><p>Click any term to get an AI explanation.</p>
+    <input type="text" id="glossary-search" class="glossary-search" placeholder="Search terms..." oninput="filterGlossary(this.value)"/></div>
+    <div class="glossary-grid" id="glossary-grid"></div>
+  </section>
+
+  <section class="tab-panel" id="tab-quiz" style="display:none">
+    <div class="panel-header"><h2>Test Your Knowledge</h2><p>5 questions about election fundamentals.</p></div>
+    <div id="quiz-container"></div>
+  </section>
+
+  <section class="tab-panel" id="tab-translate" style="display:none">
+    <div class="panel-header"><h2>Language Accessibility</h2><p>Read this guide in your preferred language.</p></div>
+    <div class="translate-card">
+      <div id="google_translate_element_full"></div>
+      <p style="margin-top:1rem;font-size:13px;color:#888">Powered by Google Translate.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>🗳 <strong>ElectionGuide</strong> — Built for Virtual-PromptWars Hackathon · Challenge 2</p>
+</footer>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage:'en',layout:google.translate.TranslateElement.InlineLayout.SIMPLE},'google_translate_element');
+  new google.translate.TranslateElement({pageLanguage:'en'},'google_translate_element_full');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
