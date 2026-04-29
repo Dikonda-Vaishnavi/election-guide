@@ -1,47 +1,28 @@
-const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+cat > js/app.js << 'EOF'
+const SYSTEM_PROMPT = `You are ElectionGuide, a friendly and nonpartisan expert assistant on election processes. Explain elections clearly and simply. Keep answers 3-6 sentences. Never endorse candidates or parties. Default to general/US elections if no country specified. Always be warm and encouraging.`;
 
-const SYSTEM_PROMPT = `You are ElectionGuide, a friendly and nonpartisan expert assistant on election processes. 
-Explain elections clearly and simply. Keep answers 3–6 sentences. Never endorse candidates or parties. 
-Default to general/US elections if no country specified. Always be warm and encouraging.`;
-
-let conversationHistory = [];
 let quizState = { index: 0, score: 0, answered: false };
 
 function initNavigation() {
   const navBtns = document.querySelectorAll('.nav-btn');
   const panels = document.querySelectorAll('.tab-panel');
   const heroSection = document.getElementById('hero-section');
-
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       const tabName = btn.getAttribute('data-tab');
-      
       panels.forEach(p => p.style.display = 'none');
-      document.getElementById(`tab-${tabName}`).style.display = 'block';
-
-      if (tabName !== 'chat') {
-        heroSection.style.display = 'none';
-      } else {
-        heroSection.style.display = 'block';
-      }
+      document.getElementById('tab-' + tabName).style.display = 'block';
+      heroSection.style.display = tabName !== 'chat' ? 'none' : 'block';
     });
   });
 }
 
 function initChatInput() {
-  const sendBtn = document.getElementById('send-btn');
-  const chatInput = document.getElementById('chat-input');
-
-  sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+  document.getElementById('send-btn').addEventListener('click', sendMessage);
+  document.getElementById('chat-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 }
 
@@ -49,49 +30,28 @@ async function sendMessage() {
   const inputEl = document.getElementById('chat-input');
   const text = inputEl.value.trim();
   if (!text) return;
-
   const sendBtn = document.getElementById('send-btn');
   sendBtn.disabled = true;
   inputEl.value = '';
-
   appendMessage(text, 'user');
-  conversationHistory.push({ role: 'user', content: text });
-
   const loader = appendLoader();
-
   try {
-   const response = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAVUqs7HDl1KU5jCvSAZ7LdkJt18-KybWI,
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: text }] }],
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
-    })
-  }
-);
-const data = await response.json();
-const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.';
-
-    if (!response.ok) {
-      throw new Error('API Error');
-    }
-
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAVUqs7HDl1KU5jCvSAZ7LdkJt18-KybWI', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: text }] }],
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
+      })
+    });
     const data = await response.json();
-    const replyText = data.content[0].text;
-    
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.';
     loader.remove();
-    appendMessage(replyText, 'bot');
-    conversationHistory.push({ role: 'assistant', content: replyText });
-    
-    if (conversationHistory.length > 20) {
-      conversationHistory = conversationHistory.slice(-20);
-    }
+    appendMessage(reply, 'bot');
   } catch (error) {
     console.error(error);
     loader.remove();
-    appendMessage("I'm sorry, I'm having trouble connecting to the network right now. Please try again later.", 'bot');
+    appendMessage('Sorry, something went wrong. Please try again.', 'bot');
   } finally {
     sendBtn.disabled = false;
   }
@@ -100,28 +60,16 @@ const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could
 function appendMessage(text, role) {
   const chatArea = document.getElementById('chat-area');
   const msgDiv = document.createElement('div');
-  msgDiv.className = `msg ${role}-msg`;
-
+  msgDiv.className = 'msg ' + role + '-msg';
   const avatar = document.createElement('div');
-  avatar.className = 'avatar';
+  avatar.className = 'avatar ' + (role === 'bot' ? 'bot-av' : 'user-av');
   avatar.textContent = role === 'bot' ? '🗳' : '👤';
-
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  
-  let sanitized = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;")
-    .replace(/\n/g, "<br>");
-    
-  bubble.innerHTML = sanitized;
-
-  msgDiv.appendChild(role === 'bot' ? avatar : bubble);
-  msgDiv.appendChild(role === 'bot' ? bubble : avatar);
-
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  bubble.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '<div class="msg-time">' + time + '</div>';
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
   chatArea.appendChild(msgDiv);
   chatArea.scrollTop = chatArea.scrollHeight;
 }
@@ -130,90 +78,40 @@ function appendLoader() {
   const chatArea = document.getElementById('chat-area');
   const msgDiv = document.createElement('div');
   msgDiv.className = 'msg bot-msg';
-  
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar';
-  avatar.textContent = '🗳';
-  
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble loading-dots';
-  bubble.innerHTML = '<div></div><div></div><div></div>';
-  
-  msgDiv.appendChild(avatar);
-  msgDiv.appendChild(bubble);
-  
+  msgDiv.innerHTML = '<div class="avatar bot-av">🗳</div><div class="bubble"><div class="loading-dots"><span></span><span></span><span></span></div></div>';
   chatArea.appendChild(msgDiv);
   chatArea.scrollTop = chatArea.scrollHeight;
   return msgDiv;
 }
 
 function quickAsk(question) {
-  const chatTabBtn = document.querySelector('.nav-btn[data-tab="chat"]');
-  chatTabBtn.click();
-  
-  const inputEl = document.getElementById('chat-input');
-  inputEl.value = question;
+  document.querySelector('.nav-btn[data-tab="chat"]').click();
+  document.getElementById('chat-input').value = question;
   sendMessage();
 }
 
 function buildTimeline() {
   const container = document.getElementById('timeline-container');
   container.innerHTML = '';
-
   ELECTION_PHASES.forEach((phase, index) => {
     const row = document.createElement('div');
     row.className = 'tl-row';
-
     const spine = document.createElement('div');
     spine.className = 'tl-spine';
-    
     const dot = document.createElement('div');
-    dot.className = `tl-dot ${phase.dot}`;
+    dot.className = 'tl-dot ' + phase.dot;
     spine.appendChild(dot);
-
     if (index < ELECTION_PHASES.length - 1) {
       const line = document.createElement('div');
       line.className = 'tl-line';
       spine.appendChild(line);
     }
-
     const card = document.createElement('div');
     card.className = 'tl-card';
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-expanded', 'false');
     card.tabIndex = 0;
-
-    card.innerHTML = `
-      <div class="tl-meta">
-        <span class="tl-phase">${phase.phase}</span>
-        <span class="tl-date">${phase.date}</span>
-      </div>
-      <h3 class="tl-title">${phase.title}</h3>
-      <div class="tl-body">
-        <p>${phase.detail}</p>
-        <button class="tl-ask-btn">Ask AI about this ↗</button>
-      </div>
-    `;
-
-    card.addEventListener('click', () => {
-      const isOpen = card.classList.contains('open');
-      card.classList.toggle('open');
-      card.setAttribute('aria-expanded', !isOpen);
-    });
-
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        card.click();
-      }
-    });
-
-    const askBtn = card.querySelector('.tl-ask-btn');
-    askBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      quickAsk(phase.ask);
-    });
-
+    card.innerHTML = '<div class="tl-meta"><span class="tl-phase">' + phase.phase + '</span><span class="tl-date">' + phase.date + '</span></div><div class="tl-title">' + phase.title + '</div><div class="tl-body"><p>' + phase.detail + '</p><button class="tl-ask-btn">Ask AI about this</button></div>';
+    card.addEventListener('click', () => card.classList.toggle('open'));
+    card.querySelector('.tl-ask-btn').addEventListener('click', (e) => { e.stopPropagation(); quickAsk(phase.ask); });
     row.appendChild(spine);
     row.appendChild(card);
     container.appendChild(row);
@@ -223,49 +121,21 @@ function buildTimeline() {
 function buildGlossary() {
   const grid = document.getElementById('glossary-grid');
   grid.innerHTML = '';
-
   GLOSSARY_TERMS.forEach(item => {
     const card = document.createElement('div');
     card.className = 'g-card';
     card.setAttribute('data-term', item.term.toLowerCase());
     card.tabIndex = 0;
-    
-    card.innerHTML = `
-      <h4 class="g-term">${item.term}</h4>
-      <p class="g-def">${item.def}</p>
-    `;
-
-    card.addEventListener('click', () => {
-      quickAsk(`Explain "${item.term}" in plain language with a real-world example related to elections.`);
-    });
-    
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        card.click();
-      }
-    });
-
+    card.innerHTML = '<div class="g-term">' + item.term + '</div><div class="g-def">' + item.def + '</div>';
+    card.addEventListener('click', () => quickAsk('Explain "' + item.term + '" in plain language with a real-world example related to elections.'));
     grid.appendChild(card);
   });
-
-  const searchInput = document.getElementById('glossary-search');
-  searchInput.addEventListener('input', (e) => filterGlossary(e.target.value));
 }
 
 function filterGlossary(query) {
-  const lowerQuery = query.toLowerCase();
-  const cards = document.querySelectorAll('.g-card');
-  
-  cards.forEach(card => {
-    const term = card.querySelector('.g-term').textContent.toLowerCase();
-    const def = card.querySelector('.g-def').textContent.toLowerCase();
-    
-    if (term.includes(lowerQuery) || def.includes(lowerQuery)) {
-      card.style.display = '';
-    } else {
-      card.style.display = 'none';
-    }
+  document.querySelectorAll('.g-card').forEach(card => {
+    const match = card.querySelector('.g-term').textContent.toLowerCase().includes(query.toLowerCase()) || card.querySelector('.g-def').textContent.toLowerCase().includes(query.toLowerCase());
+    card.style.display = match ? '' : 'none';
   });
 }
 
@@ -277,84 +147,39 @@ function buildQuiz() {
 function renderQuestion() {
   const container = document.getElementById('quiz-container');
   container.innerHTML = '';
-
-  if (quizState.index >= QUIZ_QUESTIONS.length) {
-    renderScore();
-    return;
-  }
-
+  if (quizState.index >= QUIZ_QUESTIONS.length) { renderScore(); return; }
   const qData = QUIZ_QUESTIONS[quizState.index];
-
   const card = document.createElement('div');
-  card.className = 'q-card';
-
-  card.innerHTML = `
-    <div class="q-progress">Question ${quizState.index + 1} of ${QUIZ_QUESTIONS.length}</div>
-    <div class="q-text">${qData.q}</div>
-    <div class="q-opts" id="q-opts-container"></div>
-  `;
-
+  card.className = 'quiz-card';
+  card.innerHTML = '<div class="quiz-progress">Question ' + (quizState.index + 1) + ' of ' + QUIZ_QUESTIONS.length + '</div><div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:' + Math.round((quizState.index / QUIZ_QUESTIONS.length) * 100) + '%"></div></div><div class="quiz-q">' + qData.q + '</div><div class="quiz-opts" id="quiz-opts-container"></div><div class="quiz-exp" id="quiz-exp" style="display:none">' + qData.exp + '</div>';
   container.appendChild(card);
-
-  const optsContainer = document.getElementById('q-opts-container');
-  
   qData.opts.forEach((optText, i) => {
     const btn = document.createElement('button');
-    btn.className = 'q-opt';
+    btn.className = 'quiz-opt';
     btn.textContent = optText;
-    
     btn.addEventListener('click', () => checkAnswer(i));
-    optsContainer.appendChild(btn);
+    document.getElementById('quiz-opts-container').appendChild(btn);
   });
 }
 
 function checkAnswer(selectedIdx) {
   if (quizState.answered) return;
   quizState.answered = true;
-
   const qData = QUIZ_QUESTIONS[quizState.index];
-  const buttons = document.querySelectorAll('.q-opt');
-  const card = document.querySelector('.q-card');
-
+  const buttons = document.querySelectorAll('.quiz-opt');
   buttons.forEach(btn => btn.disabled = true);
-
-  if (selectedIdx === qData.ans) {
-    buttons[selectedIdx].classList.add('correct');
-    quizState.score++;
-  } else {
-    buttons[selectedIdx].classList.add('wrong');
-    buttons[qData.ans].classList.add('correct');
-  }
-
-  const expDiv = document.createElement('div');
-  expDiv.className = 'quiz-exp';
-  expDiv.textContent = qData.exp;
-  card.appendChild(expDiv);
-
-  setTimeout(() => {
-    quizState.index++;
-    quizState.answered = false;
-    renderQuestion();
-  }, 2500);
+  if (selectedIdx === qData.ans) { buttons[selectedIdx].classList.add('correct'); quizState.score++; }
+  else { buttons[selectedIdx].classList.add('wrong'); buttons[qData.ans].classList.add('correct'); }
+  document.getElementById('quiz-exp').style.display = 'block';
+  setTimeout(() => { quizState.index++; quizState.answered = false; renderQuestion(); }, 2500);
 }
 
 function renderScore() {
   const container = document.getElementById('quiz-container');
-  
   let msg = "Keep learning — explore the Timeline and Glossary tabs.";
-  if (quizState.score === 5) {
-    msg = "Perfect score! You're an election expert! 🎉";
-  } else if (quizState.score >= 3) {
-    msg = "Great work! You have a solid understanding of elections.";
-  }
-
-  container.innerHTML = `
-    <div class="q-score-card">
-      <div class="q-score">${quizState.score}/${QUIZ_QUESTIONS.length}</div>
-      <p class="q-text">${msg}</p>
-      <button class="chip" style="margin-top:20px; font-size:1.1rem; padding:10px 20px" onclick="buildQuiz()">Retake Quiz</button>
-    </div>
-  `;
+  if (quizState.score === 5) msg = "Perfect score! You are an election expert!";
+  else if (quizState.score >= 3) msg = "Great work! You have a solid understanding of elections.";
+  container.innerHTML = '<div class="quiz-card quiz-score-screen"><div class="quiz-score-num">' + quizState.score + '/' + QUIZ_QUESTIONS.length + '</div><div class="quiz-score-label">' + msg + '</div><button class="quiz-retake" onclick="buildQuiz()">Retake Quiz</button></div>';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -364,3 +189,4 @@ document.addEventListener('DOMContentLoaded', () => {
   buildGlossary();
   buildQuiz();
 });
+EOF
