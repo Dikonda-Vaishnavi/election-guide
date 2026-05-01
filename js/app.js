@@ -1,88 +1,149 @@
-var SYSTEM_PROMPT = "You are a helpful election guide assistant. Answer questions clearly and concisely.";
+// Tab Logic
+const navButtons = document.querySelectorAll('nav button');
+const tabPanels = document.querySelectorAll('.tab-panel');
 
-document.addEventListener("DOMContentLoaded", function() {
-  initNavigation();
-  initChatInput();
-  buildTimeline();
-  buildGlossary();
-  buildQuiz();
-  initChips();
-});
-
-function initNavigation() {
-  var navButtons = document.querySelectorAll("nav button");
-  navButtons.forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      var tabId = "tab-" + this.getAttribute("data-tab");
-      showTab(tabId);
-    });
-  });
-}
-
-function showTab(tabId) {
-  var tabs = document.querySelectorAll(".tab-panel");
-  tabs.forEach(function(tab) {
-    tab.style.display = "none";
-  });
-  var selectedTab = document.getElementById(tabId);
-  if (selectedTab) {
-    selectedTab.style.display = "block";
-  }
-
-  var hero = document.getElementById("hero");
-  if (tabId === "tab-chat") {
-    hero.style.display = "block";
-  } else {
-    hero.style.display = "none";
-  }
-}
-
-function initChatInput() {
-  var sendBtn = document.getElementById("send-btn");
-  var chatInput = document.getElementById("chat-input");
-
-  sendBtn.addEventListener("click", function() {
-    sendMessage();
-  });
-
-  chatInput.addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      sendMessage();
+navButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Remove active class from all
+    navButtons.forEach(b => b.classList.remove('active'));
+    tabPanels.forEach(p => p.style.display = 'none');
+    
+    // Add active to clicked
+    btn.classList.add('active');
+    const tabId = btn.getAttribute('data-tab');
+    const tabElement = document.getElementById(`tab-${tabId}`);
+    if (tabElement) {
+        tabElement.style.display = 'block';
     }
   });
-}
+});
 
-function initChips() {
-  var chips = document.querySelectorAll(".chip");
-  chips.forEach(function(chip) {
-    chip.addEventListener("click", function() {
-      quickAsk(this.innerText);
+// Render Timeline
+const timelineContainer = document.getElementById('timeline-container');
+if (timelineContainer && typeof ELECTION_PHASES !== 'undefined') {
+    ELECTION_PHASES.forEach(phase => {
+      const item = document.createElement('div');
+      item.className = 'timeline-item';
+      item.innerHTML = `
+        <div class="timeline-date">${phase.date}</div>
+        <div class="timeline-dot" style="background-color: ${phase.dot}"></div>
+        <div class="timeline-content">
+          <h3>${phase.title}</h3>
+          <p>${phase.detail}</p>
+          <button class="ask-btn" style="margin-top:0.5rem; background:none; border:none; color:var(--primary); cursor:pointer; text-decoration:underline;">
+            Ask: ${phase.ask}
+          </button>
+        </div>
+      `;
+      timelineContainer.appendChild(item);
+      
+      // Hook up ask button
+      item.querySelector('.ask-btn').addEventListener('click', () => {
+        const chatTabBtn = document.querySelector('button[data-tab="chat"]');
+        if (chatTabBtn) chatTabBtn.click();
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) chatInput.value = phase.ask;
+        const sendBtn = document.getElementById('send-btn');
+        if (sendBtn) sendBtn.click();
+      });
     });
-  });
 }
 
-async function sendMessage() {
-  var chatInput = document.getElementById("chat-input");
-  var chatArea = document.getElementById("chat-area");
-  var text = chatInput.value.trim();
+// Render Glossary
+const glossaryContainer = document.getElementById('glossary-container');
+if (glossaryContainer && typeof GLOSSARY_TERMS !== 'undefined') {
+    GLOSSARY_TERMS.forEach(term => {
+      const card = document.createElement('div');
+      card.className = 'glossary-card';
+      card.innerHTML = `
+        <h4>${term.term}</h4>
+        <p>${term.def}</p>
+      `;
+      glossaryContainer.appendChild(card);
+    });
+}
 
-  if (!text) return;
+// Render Quiz
+const quizContainer = document.getElementById('quiz-container');
+if (quizContainer && typeof QUIZ_QUESTIONS !== 'undefined') {
+    QUIZ_QUESTIONS.forEach((qData, index) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'quiz-question';
+      
+      const optionsHtml = qData.opts.map((opt, i) => `
+        <button class="quiz-option" data-qindex="${index}" data-optindex="${i}">${opt}</button>
+      `).join('');
+    
+      qDiv.innerHTML = `
+        <h3>${index + 1}. ${qData.q}</h3>
+        <div class="quiz-options">
+          ${optionsHtml}
+        </div>
+        <div class="quiz-exp" id="exp-${index}">${qData.exp}</div>
+      `;
+      quizContainer.appendChild(qDiv);
+    });
+}
 
-  chatInput.value = "";
+// Quiz Logic
+document.querySelectorAll('.quiz-option').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const qIndex = e.target.getAttribute('data-qindex');
+    const optIndex = parseInt(e.target.getAttribute('data-optindex'));
+    const qData = QUIZ_QUESTIONS[qIndex];
+    
+    // Disable all options for this question
+    const parent = e.target.closest('.quiz-options');
+    parent.querySelectorAll('.quiz-option').forEach(b => {
+      b.disabled = true;
+      if (parseInt(b.getAttribute('data-optindex')) === qData.ans) {
+        b.classList.add('correct');
+      }
+    });
 
-  var userMsg = document.createElement("div");
-  userMsg.className = "msg user-msg";
-  userMsg.innerText = "You: " + text;
-  chatArea.appendChild(userMsg);
+    if (optIndex !== qData.ans) {
+      e.target.classList.add('incorrect');
+    }
 
-  var loadingMsg = document.createElement("div");
-  loadingMsg.className = "msg ai-msg";
-  loadingMsg.innerText = "AI: Thinking...";
-  chatArea.appendChild(loadingMsg);
+    const expElement = document.getElementById(`exp-${qIndex}`);
+    if (expElement) expElement.style.display = 'block';
+  });
+});
+
+// Chat Logic
+const chatArea = document.getElementById('chat-area');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const quickChips = document.querySelectorAll('.quick-chips button');
+
+const SYSTEM_PROMPT = "You are a helpful and knowledgeable assistant named ElectionGuide. Answer questions about the election process accurately and concisely.";
+
+async function sendMessage(text) {
+  if (!text.trim()) return;
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.textContent = text;
+  if (chatArea) {
+      chatArea.appendChild(userMsg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+  }
+  if (chatInput) chatInput.value = '';
+
+  // Add loading message
+  const botMsg = document.createElement('div');
+  botMsg.className = 'chat-msg bot';
+  botMsg.textContent = 'Thinking...';
+  if (chatArea) {
+      chatArea.appendChild(botMsg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+  }
 
   try {
+    const API_KEY = 'AIzaSyAVUqs7HDl1KU5jCvSAZ7LdkJt18-KybWI'; // Using the key from your previous setup
     const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA-E7_6XZZnCx833bYFDlzOiLK7AeqnNHo',
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,170 +153,45 @@ async function sendMessage() {
         })
       }
     );
+
     const data = await response.json();
-    const reply = data.candidates[0].content.parts[0].text;
 
-    loadingMsg.innerText = "AI: " + reply;
-  } catch (error) {
-    loadingMsg.innerText = "AI: Error connecting to the server.";
-  }
-}
-
-function buildTimeline() {
-  var container = document.getElementById("timeline-container");
-  container.innerHTML = "";
-
-  ELECTION_PHASES.forEach(function(phase) {
-    var card = document.createElement("div");
-    card.className = "timeline-card";
-    
-    var title = document.createElement("h3");
-    title.innerText = phase.phase + ": " + phase.title + " (" + phase.date + ")";
-    
-    var detail = document.createElement("p");
-    detail.className = "timeline-detail";
-    detail.innerText = phase.detail;
-    detail.style.display = "none";
-    
-    var askBtn = document.createElement("button");
-    askBtn.className = "ask-btn";
-    askBtn.innerText = "Ask AI";
-    askBtn.style.display = "none";
-    askBtn.onclick = function(e) {
-      e.stopPropagation();
-      quickAsk(phase.ask);
-    };
-
-    card.appendChild(title);
-    card.appendChild(detail);
-    card.appendChild(askBtn);
-
-    card.addEventListener("click", function() {
-      card.classList.toggle("open");
-      if (card.classList.contains("open")) {
-        detail.style.display = "block";
-        askBtn.style.display = "inline-block";
-      } else {
-        detail.style.display = "none";
-        askBtn.style.display = "none";
-      }
-    });
-
-    container.appendChild(card);
-  });
-}
-
-function buildGlossary() {
-  var container = document.getElementById("glossary-container");
-  var searchInput = document.getElementById("glossary-search");
-
-  function renderTerms(filterText) {
-    container.innerHTML = "";
-    var lowerFilter = filterText.toLowerCase();
-
-    GLOSSARY_TERMS.forEach(function(item) {
-      if (item.term.toLowerCase().indexOf(lowerFilter) > -1 || item.def.toLowerCase().indexOf(lowerFilter) > -1) {
-        var card = document.createElement("div");
-        card.className = "glossary-card";
-        
-        var term = document.createElement("h3");
-        term.innerText = item.term;
-        
-        var def = document.createElement("p");
-        def.innerText = item.def;
-
-        card.appendChild(term);
-        card.appendChild(def);
-
-        card.addEventListener("click", function() {
-          quickAsk("What does " + item.term + " mean?");
-        });
-
-        container.appendChild(card);
-      }
-    });
-  }
-
-  renderTerms("");
-
-  searchInput.addEventListener("keyup", function() {
-    renderTerms(this.value);
-  });
-}
-
-var currentQuizIndex = 0;
-var quizScore = 0;
-
-function buildQuiz() {
-  currentQuizIndex = 0;
-  quizScore = 0;
-  renderQuizQuestion();
-}
-
-function renderQuizQuestion() {
-  var container = document.getElementById("quiz-container");
-  container.innerHTML = "";
-
-  if (currentQuizIndex >= QUIZ_QUESTIONS.length) {
-    container.innerHTML = "<h2>Quiz Complete!</h2><p>Your score: " + quizScore + " out of " + QUIZ_QUESTIONS.length + "</p>";
-    var restartBtn = document.createElement("button");
-    restartBtn.innerText = "Restart Quiz";
-    restartBtn.onclick = buildQuiz;
-    container.appendChild(restartBtn);
-    return;
-  }
-
-  var qData = QUIZ_QUESTIONS[currentQuizIndex];
-  var qEl = document.createElement("h3");
-  qEl.innerText = "Question " + (currentQuizIndex + 1) + ": " + qData.q;
-  container.appendChild(qEl);
-
-  var optionsContainer = document.createElement("div");
-  optionsContainer.className = "quiz-options";
-
-  qData.opts.forEach(function(opt, index) {
-    var btn = document.createElement("button");
-    btn.className = "quiz-option";
-    btn.innerText = opt;
-    btn.onclick = function() {
-      handleQuizAnswer(index, qData.ans, optionsContainer, qData.exp);
-    };
-    optionsContainer.appendChild(btn);
-  });
-
-  container.appendChild(optionsContainer);
-}
-
-function handleQuizAnswer(selectedIndex, correctIndex, optionsContainer, explanation) {
-  var buttons = optionsContainer.querySelectorAll("button");
-  buttons.forEach(function(btn, index) {
-    btn.disabled = true;
-    if (index === correctIndex) {
-      btn.style.backgroundColor = "green";
-      btn.style.color = "white";
-    } else if (index === selectedIndex) {
-      btn.style.backgroundColor = "red";
-      btn.style.color = "white";
+    if (!response.ok) {
+      throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
     }
-  });
 
-  if (selectedIndex === correctIndex) {
-    quizScore++;
+    if (data.candidates && data.candidates.length > 0) {
+      const reply = data.candidates[0].content.parts[0].text;
+      botMsg.innerHTML = reply.replace(/\n/g, '<br>');
+    } else {
+      throw new Error("No response generated from the model.");
+    }
+  } catch (error) {
+    console.error("Chat Error:", error);
+    botMsg.textContent = `Sorry, I couldn't get an answer right now. ${error.message}`;
   }
-
-  var expEl = document.createElement("p");
-  expEl.innerText = explanation;
-  optionsContainer.appendChild(expEl);
-
-  setTimeout(function() {
-    currentQuizIndex++;
-    renderQuizQuestion();
-  }, 2500);
+  
+  if (chatArea) {
+      chatArea.scrollTop = chatArea.scrollHeight;
+  }
 }
 
-function quickAsk(question) {
-  showTab("tab-chat");
-  var chatInput = document.getElementById("chat-input");
-  chatInput.value = question;
-  sendMessage();
+if (sendBtn) {
+    sendBtn.addEventListener('click', () => {
+      sendMessage(chatInput.value);
+    });
 }
+
+if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage(chatInput.value);
+      }
+    });
+}
+
+quickChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    sendMessage(chip.textContent);
+  });
+});
