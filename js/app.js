@@ -102,7 +102,7 @@ document.querySelectorAll('.quiz-option').forEach(btn => {
     });
 
     if (optIndex !== qData.ans) {
-      e.target.classList.add('incorrect');
+      e.target.classList.add('wrong');
     }
 
     const expElement = document.getElementById(`exp-${qIndex}`);
