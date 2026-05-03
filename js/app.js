@@ -141,7 +141,7 @@ async function sendMessage(text) {
   }
 
   try {
-    const API_KEY = window.GEMINI_KEY || '';
+    const API_KEY = window.GEMINI_KEY || 'AIzaSyCGCQMnbWwXP9yZR0MhrBY1zCtd9ZEZahs';
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
       {
         method: 'POST',
