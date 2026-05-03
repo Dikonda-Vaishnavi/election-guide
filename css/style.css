@@ -231,7 +231,7 @@ main {
 .quiz-option {
   padding: 1rem;
   border: 1px solid var(--border);
-  background: white;
+  background: rgb(237, 21, 21);
   text-align: left;
   border-radius: 4px;
   cursor: pointer;
@@ -239,7 +239,7 @@ main {
 }
 
 .quiz-option:hover:not(:disabled) {
-  background: #f0f0f0;
+  background: #09c42b;
 }
 
 @media (max-width: 600px) {
