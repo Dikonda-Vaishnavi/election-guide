@@ -141,7 +141,7 @@ async function sendMessage(text) {
   }
 
   try {
-    const API_KEY = window.GEMINI_KEY || 'AIzaSyCGCQMnbWwXP9yZR0MhrBY1zCtd9ZEZahs';
+    const API_KEY = 'AIzaSyCGCQMnbWwXP9yZR0MhrBY1zCtd9ZEZahs';
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
       {
         method: 'POST',
@@ -155,9 +155,7 @@ async function sendMessage(text) {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
-    }
+    
 
     if (data.candidates && data.candidates.length > 0) {
       const reply = data.candidates[0].content.parts[0].text;
