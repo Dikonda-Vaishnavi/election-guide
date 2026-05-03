@@ -231,7 +231,7 @@ main {
 .quiz-option {
   padding: 1rem;
   border: 1px solid var(--border);
-  background: rgb(237, 21, 21);
+  background: white;
   text-align: left;
   border-radius: 4px;
   cursor: pointer;
@@ -239,7 +239,24 @@ main {
 }
 
 .quiz-option:hover:not(:disabled) {
-  background: #09c42b;
+  background: #e6eef5;
+}
+
+.quiz-option.correct {
+  background: #eafaf1 !important;
+  border-color: #27ae60 !important;
+  color: #1a7a40 !important;
+}
+
+.quiz-option.wrong {
+  background: #fdf0f0 !important;
+  border-color: #c0392b !important;
+  color: #a02020 !important;
+}
+
+.quiz-option:disabled {
+  cursor: default;
+  opacity: 1 !important;
 }
 
 @media (max-width: 600px) {
