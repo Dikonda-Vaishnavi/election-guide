@@ -249,7 +249,7 @@ main {
 }
 
 .quiz-option.wrong {
-  background: #fdf0f0 !important;
+  background: #fbc8c8 !important;
   border-color: #c0392b !important;
   color: #a02020 !important;
 }
@@ -257,6 +257,22 @@ main {
 .quiz-option:disabled {
   cursor: default;
   opacity: 1 !important;
+}
+.quiz-option.correct {
+  background: #eafaf1 !important;
+  border: 2px solid #27ae60 !important;
+  color: #1a7a40 !important;
+}
+
+.quiz-option.wrong {
+  background: #fdf0f0 !important;
+  border: 2px solid #c0392b !important;
+  color: #a02020 !important;
+}
+
+.quiz-option:disabled {
+  opacity: 1 !important;
+  cursor: default !important;
 }
 
 @media (max-width: 600px) {
