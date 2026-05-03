@@ -141,8 +141,7 @@ async function sendMessage(text) {
   }
 
   try {
-    const API_KEY = 'AIzaSyCVA8Xms6I1t-5EXWROE_2ft-3jmqwkpQ4'; // Using the key from your previous setup
-    const response = await fetch(
+    const API_KEY = window.GEMINI_KEY || '';
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
       {
         method: 'POST',
@@ -152,7 +151,7 @@ async function sendMessage(text) {
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
         })
       }
-    );
+    ;
 
     const data = await response.json();
 
