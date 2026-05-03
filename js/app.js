@@ -155,7 +155,9 @@ async function sendMessage(text) {
 
     const data = await response.json();
 
-    
+    if (!response.ok) {
+  throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
+}
 
     if (data.candidates && data.candidates.length > 0) {
       const reply = data.candidates[0].content.parts[0].text;
