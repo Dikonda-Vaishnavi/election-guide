@@ -1,5 +1,5 @@
 :root {
-  --accent: #2d5a8e;
+  --accent: #ed8f14;
   --paper: #fdfaf5;
   --border: #d4c9b0;
   --text: #333333;
@@ -184,7 +184,7 @@ main {
 }
 
 .ask-btn:hover {
-  background: #1c3c61;
+  background: #61421c;
 }
 
 /* Glossary */
