@@ -141,7 +141,7 @@ async function sendMessage(text) {
   }
 
   try {
-    const API_KEY = 'AIzaSyCUMlbTt9wsZLFExV8gFJalK7f6XUKnVgs'; // Using the key from your previous setup
+    const API_KEY = 'AIzaSyCVA8Xms6I1t-5EXWROE_2ft-3jmqwkpQ4'; // Using the key from your previous setup
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
       {
